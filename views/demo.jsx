@@ -26,7 +26,7 @@ export default React.createClass({
       formattedMessages: [],
       audioSource: null,
       speakerLabels: true,
-      keywords: this.getKeywords('en-US_BroadbandModel'),
+      keywords: this.getKeywords(), 
       // transcript model and keywords are the state that they were when the button was clicked.
       // Changing them during a transcription would cause a mismatch between the setting sent to the
       // service and what is displayed on the demo, and could cause bugs.
@@ -249,18 +249,14 @@ export default React.createClass({
       .then(token => this.setState({ token })).catch(this.handleError);
   },
 
-  getKeywords(model) {
-    // a few models have more than two sample files, but the demo can only handle
-    // two samples at the moment
-    // so this just takes the keywords from the first two samples
-    const files = samples[model];
-    return (files && files.length >= 2 && `${files[0].keywords}, ${files[1].keywords}`) || '';
+  getKeywords() {
+    return 'Idea, stop';
   },
 
   handleModelChange(model) {
     this.reset();
     this.setState({ model,
-      keywords: this.getKeywords(model),
+      keywords: this.getKeywords(),
       speakerLabels: this.supportsSpeakerLabels(model) });
 
     // clear the microphone narrowband error if it's visible and a broadband model was just selected
@@ -394,8 +390,16 @@ export default React.createClass({
           <button className={micButtonClass} onClick={this.handleMicClick}>
             <Icon type={this.state.audioSource === 'mic' ? 'stop' : 'microphone'} fill={micIconFill} /> Record Audio
           </button>
-
         </div>
+
+        <p>Keywords to spot: <input
+              value={this.state.keywords}
+              onChange={this.handleKeywordsChange}
+              type="text"
+              id="keywords"
+              placeholder="Type comma separated keywords here (optional)"
+              className="base--input"
+            /></p>
 
         {err}
 
@@ -405,6 +409,11 @@ export default React.createClass({
           </Pane>
           <Pane label="IDEAS">
             // run script to parse JSON object created above and output list of ideas!
+            <Keywords
+              messages={messages}
+              keywords={this.state.settingsAtStreamStart.keywords}
+              isInProgress={!!this.state.audioSource}
+            />
           </Pane>
         </Tabs>
 
