@@ -16,6 +16,8 @@ function makeJsonLink(obj, i) {
   const str = (json.length <= 78) ? json
     : `${json.substr(0, 14)} ...${json.substr(-60).replace(/,/g, ', ')}`;
 
+// THIS IS WHERE THE JSON IS RETURNED FROM SO IF YOU PARSE THIS INFORMATION HERE AND THEN RETURNED
+// THE PARSED INFO HERE, THE "IDEAS" WOULD SHOW UP IN THE JSON Script TAB
   return json;
 //return (
 //  <JsonLink json={obj} key={`jsonlink-${i}`}>
