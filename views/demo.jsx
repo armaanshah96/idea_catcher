@@ -123,24 +123,6 @@ export default React.createClass({
     this.handleStream(recognizeMicrophone(this.getRecognizeOptions()));
   },
 
-  handleUploadClick() {
-    if (this.state.audioSource === 'upload') {
-      this.stopTranscription();
-    } else {
-      this.dropzone.open();
-    }
-  },
-
-  handleUserFile(files) {
-    const file = files[0];
-    if (!file) {
-      return;
-    }
-    this.reset();
-    this.setState({ audioSource: 'upload' });
-    this.playFile(file);
-  },
-
   handleUserFileRejection() {
     this.setState({ error: 'Sorry, that file does not appear to be compatible.' });
   },
@@ -385,62 +367,14 @@ export default React.createClass({
 
     return (
 
-      <Dropzone
-        onDropAccepted={this.handleUserFile}
-        onDropRejected={this.handleUserFileRejection}
-        maxSize={200 * 1024 * 1024}
-        accept="audio/wav, audio/mp3, audio/mpeg, audio/l16, audio/ogg, audio/flac, .mp3, .mpeg, .wav, .ogg, .opus, .flac" // eslint-disable-line
-        disableClick
+      <div
         className="dropzone _container _container_large"
-        activeClassName="dropzone-active"
-        rejectClassName="dropzone-reject"
-        ref={(node) => {
-          this.dropzone = node;
-        }}
       >
 
-        <div className="drop-info-container">
-          <div className="drop-info">
-            <h1>Drop an audio file here.</h1>
-            <p>{'Watson Speech to Text supports .mp3, .mpeg, .wav, .opus, and .flac files up to 200mb.'}</p>
-          </div>
-        </div>
-
-        <h2 className="base--h2">Transcribe Audio</h2>
-
-        <ul className="base--ul">
-          {micBullet}
-          <li className="base--li">{'Upload pre-recorded audio (.mp3, .mpeg, .wav, .flac, or .opus only).'}</li>
-          <li className="base--li">Play one of the sample audio files.*</li>
-        </ul>
-
-        <div className="smalltext">
-          {'*Both US English broadband sample audio files are covered under the Creative Commons license.'}
-        </div>
-
-        <div style={{
-          paddingRight: '3em',
-          paddingBottom: '2em',
-        }}
-        >
-          The returned result includes the recognized text, {' '}
-          <a className="base--a" href="https://console.bluemix.net/docs/services/speech-to-text/output.html#output">word alternatives</a>, {' '}
-          and <a className="base--a" href="https://console.bluemix.net/docs/services/speech-to-text/output.html#output">spotted keywords</a>. {' '}
-          Some models can <a className="base--a" href="https://console.bluemix.net/docs/services/speech-to-text/output.html#output">detect multiple speakers</a>; this may slow down performance.
-        </div>
-
+        <h2 className="base--h2">Record Your Brainstorm!</h2>
 
         <div className="flex setup">
           <div className="column">
-
-            <p>Voice Model:
-              <ModelDropdown
-                model={this.state.model}
-                token={this.state.token}
-                onChange={this.handleModelChange}
-              />
-            </p>
-
             <p className={this.supportsSpeakerLabels() ? 'base--p' : 'base--p_light'}>
               <input
                 className="base--checkbox"
@@ -450,23 +384,7 @@ export default React.createClass({
                 disabled={!this.supportsSpeakerLabels()}
                 id="speaker-labels"
               />
-              <label className="base--inline-label" htmlFor="speaker-labels">
-                Detect multiple speakers {this.supportsSpeakerLabels() ? '' : ' (Not supported on current model)'}
-              </label>
             </p>
-
-          </div>
-          <div className="column">
-
-            <p>Keywords to spot: <input
-              value={this.state.keywords}
-              onChange={this.handleKeywordsChange}
-              type="text"
-              id="keywords"
-              placeholder="Type comma separated keywords here (optional)"
-              className="base--input"
-            /></p>
-
           </div>
         </div>
 
@@ -477,44 +395,20 @@ export default React.createClass({
             <Icon type={this.state.audioSource === 'mic' ? 'stop' : 'microphone'} fill={micIconFill} /> Record Audio
           </button>
 
-          <button className={buttonClass} onClick={this.handleUploadClick}>
-            <Icon type={this.state.audioSource === 'upload' ? 'stop' : 'upload'} /> Upload Audio File
-          </button>
-
-          <button className={buttonClass} onClick={this.handleSample1Click}>
-            <Icon type={this.state.audioSource === 'sample-1' ? 'stop' : 'play'} /> Play Sample 1
-          </button>
-
-          <button className={buttonClass} onClick={this.handleSample2Click}>
-            <Icon type={this.state.audioSource === 'sample-2' ? 'stop' : 'play'} /> Play Sample 2
-          </button>
-
         </div>
 
         {err}
 
         <Tabs selected={0}>
-          <Pane label="Text">
-            {this.state.settingsAtStreamStart.speakerLabels
-              ? <SpeakersView messages={messages} />
-              : <Transcript messages={messages} />}
-          </Pane>
-          <Pane label="Word Timings and Alternatives">
-            <TimingView messages={messages} />
-          </Pane>
-          <Pane label={`Keywords ${getKeywordsSummary(this.state.settingsAtStreamStart.keywords, messages)}`}>
-            <Keywords
-              messages={messages}
-              keywords={this.state.settingsAtStreamStart.keywords}
-              isInProgress={!!this.state.audioSource}
-            />
-          </Pane>
-          <Pane label="JSON">
+          <Pane label="JSON Script">
             <JSONView raw={this.state.rawMessages} formatted={this.state.formattedMessages} />
+          </Pane>
+          <Pane label="IDEAS">
+            // run script to parse JSON object created above and output list of ideas!
           </Pane>
         </Tabs>
 
-      </Dropzone>
+      </div>
     );
   },
 });

@@ -16,11 +16,12 @@ function makeJsonLink(obj, i) {
   const str = (json.length <= 78) ? json
     : `${json.substr(0, 14)} ...${json.substr(-60).replace(/,/g, ', ')}`;
 
-  return (
-    <JsonLink json={obj} key={`jsonlink-${i}`}>
-      <code>{str}</code>
-    </JsonLink>
-  );
+  return json;
+//return (
+//  <JsonLink json={obj} key={`jsonlink-${i}`}>
+//    <code>{str}</code>
+//  </JsonLink>
+//);
 }
 
 // we want to insert nulls into the array rather than remove the elements so that the non-null
